@@ -17,6 +17,7 @@ export function Catalog() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState('');
 
   // Временные значения фильтров (то, что видит пользователь в полях)
   const [tempPriceMin, setTempPriceMin] = useState('');
@@ -43,6 +44,7 @@ export function Catalog() {
         if (activePriceMin) url += `&min_price=${activePriceMin}`;
         if (activePriceMax) url += `&max_price=${activePriceMax}`;
         if (activeCategory) url += `&category=${activeCategory}`;
+        if (sortBy) url += `&sort_by=${sortBy}`;
         
         const response = await fetch(url, {
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -62,7 +64,7 @@ export function Catalog() {
     };
     
     fetchKnives();
-  }, [page, searchQuery, activePriceMin, activePriceMax, activeCategory]);
+  }, [page, searchQuery, activePriceMin, activePriceMax, activeCategory, sortBy]);
 
   const applyFilters = () => {
     setActivePriceMin(tempPriceMin);
@@ -109,34 +111,50 @@ export function Catalog() {
       
       {/* Блок фильтров */}
       <div style={styles.filters}>
-        <input
-          type="number"
-          placeholder="Цена от"
-          value={tempPriceMin}
-          onChange={(e) => setTempPriceMin(e.target.value)}
-          style={styles.filterInput}
-        />
-        <input
-          type="number"
-          placeholder="Цена до"
-          value={tempPriceMax}
-          onChange={(e) => setTempPriceMax(e.target.value)}
-          style={styles.filterInput}
-        />
-        <select
-          value={tempCategory}
-          onChange={(e) => setTempCategory(e.target.value)}
-          style={styles.filterSelect}
-        >
-          <option value="">Все категории</option>
-          <option value="охотничьи">Охотничьи</option>
-          <option value="кухонные">Кухонные</option>
-          <option value="тактические">Тактические</option>
-        </select>
-        <button onClick={applyFilters} style={styles.filterButton}>
-          Применить
-        </button>
-      </div>
+  <input
+    type="number"
+    placeholder="Цена от"
+    value={tempPriceMin}
+    onChange={(e) => setTempPriceMin(e.target.value)}
+    style={styles.filterInput}
+  />
+  <input
+    type="number"
+    placeholder="Цена до"
+    value={tempPriceMax}
+    onChange={(e) => setTempPriceMax(e.target.value)}
+    style={styles.filterInput}
+  />
+  <select
+    value={tempCategory}
+    onChange={(e) => setTempCategory(e.target.value)}
+    style={styles.filterSelect}
+  >
+    <option value="">Все категории</option>
+    <option value="охотничьи">Охотничьи</option>
+    <option value="кухонные">Кухонные</option>
+    <option value="тактические">Тактические</option>
+  </select>
+  <button onClick={applyFilters} style={styles.filterButton}>
+    Применить
+  </button>
+
+  {/* Сортировка */}
+  <select
+    value={sortBy}
+    onChange={(e) => {
+      setSortBy(e.target.value);
+      setPage(1);
+    }}
+    style={styles.filterSelect}
+  >
+    <option value="">Без сортировки</option>
+    <option value="price_asc">Цена: по возрастанию</option>
+    <option value="price_desc">Цена: по убыванию</option>
+    <option value="name_asc">Название: А-Я</option>
+    <option value="name_desc">Название: Я-А</option>
+  </select>
+</div>
       
       <div style={styles.grid}>
         {knives.map((knife) => (

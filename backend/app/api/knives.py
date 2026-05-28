@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.models import Knife, Category
 from typing import List
 import json
@@ -22,8 +23,10 @@ def get_knives(
     min_price: float = Query(None),
     max_price: float = Query(None),
     category: str = Query(None),
+    sort_by: str = Query(None),
     db: Session = Depends(get_db)
 ):
+    print(f"Received sort_by: {sort_by}")
     query = db.query(Knife)
     
     # Поиск по названию или описанию
@@ -44,6 +47,17 @@ def get_knives(
     if category:
         query = query.join(Knife.category).filter(Category.name == category)
     
+    if sort_by == "price_asc":
+        query = query.order_by(Knife.price.asc())
+    elif sort_by == "price_desc":
+        query = query.order_by(Knife.price.desc())
+    elif sort_by == "name_asc":
+        query = query.order_by(Knife.name.asc())
+    elif sort_by == "name_desc":
+        query = query.order_by(Knife.name.desc())
+    else:
+        query = query.order_by(Knife.id.desc())
+
     knives = query.offset(skip).limit(limit).all()
     return [KnifeResponse.model_validate(k) for k in knives]
 
