@@ -11,6 +11,7 @@ import { Favorites } from './pages/Favorites';
 import { getCurrentUser } from './services/api';
 import { setUser, setToken } from './store/authSlice';
 import { KnifeDetails } from './pages/KnifeDetails';
+import { NotFound } from './pages/NotFound';
 
 function App() {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ function App() {
           />
           <Route path="/compare" element={<div style={{ textAlign: 'center' }}>Страница сравнения (скоро)</div>} />
           <Route path="/" element={<div style={{ textAlign: 'center' }}>Главная страница (скоро)</div>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </BrowserRouter>
