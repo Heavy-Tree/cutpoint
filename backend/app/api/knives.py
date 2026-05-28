@@ -24,7 +24,9 @@ def get_knives(
     max_price: float = Query(None),
     category: str = Query(None),
     sort_by: str = Query(None),
+    ids: str = Query(None),
     db: Session = Depends(get_db)
+    
 ):
     print(f"Received sort_by: {sort_by}")
     query = db.query(Knife)
@@ -46,6 +48,12 @@ def get_knives(
     # Фильтр по категории (поиск по названию категории)
     if category:
         query = query.join(Knife.category).filter(Category.name == category)
+
+    # Фильтр по ID (для страницы избранного)
+    if ids:
+        ids_list = [int(x) for x in ids.split(',') if x.isdigit()]
+        if ids_list:
+            query = query.filter(Knife.id.in_(ids_list))
     
     if sort_by == "price_asc":
         query = query.order_by(Knife.price.asc())

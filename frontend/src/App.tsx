@@ -7,13 +7,13 @@ import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Catalog } from './pages/Catalog';
+import { Favorites } from './pages/Favorites';
 import { getCurrentUser } from './services/api';
 import { setUser, setToken } from './store/authSlice';
 
 function App() {
   const dispatch = useDispatch();
 
-  // Загружаем пользователя при старте приложения (если есть токен)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -42,7 +42,14 @@ function App() {
             } 
           />
           <Route path="/catalog" element={<Catalog />} />
-          <Route path="/favorites" element={<div style={{ textAlign: 'center' }}>Страница избранного (скоро)</div>} />
+          <Route 
+            path="/favorites" 
+            element={
+              <ProtectedRoute>
+                <Favorites />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/compare" element={<div style={{ textAlign: 'center' }}>Страница сравнения (скоро)</div>} />
           <Route path="/" element={<div style={{ textAlign: 'center' }}>Главная страница (скоро)</div>} />
         </Routes>
