@@ -10,6 +10,7 @@ import { Catalog } from './pages/Catalog';
 import { Favorites } from './pages/Favorites';
 import { getCurrentUser } from './services/api';
 import { setUser, setToken } from './store/authSlice';
+import { KnifeDetails } from './pages/KnifeDetails';
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ function App() {
       <main style={{ minHeight: '100vh', padding: '2rem 0' }}>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/catalog/:id" element={<KnifeDetails />} />
           <Route path="/register" element={<Register />} />
           <Route 
             path="/profile" 

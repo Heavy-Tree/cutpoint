@@ -74,10 +74,17 @@ def get_knife(knife_id: int, db: Session = Depends(get_db)):
     knife = db.query(Knife).filter(Knife.id == knife_id).first()
     if not knife:
         raise HTTPException(status_code=404, detail="Knife not found")
+    return KnifeResponse.model_validate(knife)
+
+@router.post("/{knife_id}/view", status_code=200)
+def increment_views(knife_id: int, db: Session = Depends(get_db)):
+    """Увеличить счётчик просмотров ножа (без авторизации)"""
+    knife = db.query(Knife).filter(Knife.id == knife_id).first()
+    if not knife:
+        raise HTTPException(status_code=404, detail="Knife not found")
     knife.views += 1
     db.commit()
-    db.refresh(knife)
-    return KnifeResponse.model_validate(knife)
+    return {"views": knife.views}
 
 @router.post("/", response_model=KnifeResponse, status_code=201)
 def create_knife(knife_data: KnifeCreate, current_user: User = Depends(get_current_admin), db: Session = Depends(get_db)):
