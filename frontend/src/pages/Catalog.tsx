@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 interface Knife {
   id: number;
@@ -36,7 +36,6 @@ export function Catalog() {
         if (!response.ok) throw new Error('Ошибка загрузки');
         
         const data = await response.json();
-        // Бэкенд возвращает массив напрямую
         const knivesArray = Array.isArray(data) ? data : data.data || [];
         setKnives(knivesArray);
         setTotalPages(data.pages || 1);
@@ -88,25 +87,19 @@ export function Catalog() {
       
       <div style={styles.grid}>
         {knives.map((knife) => (
-          <Link 
-            to={`/catalog/${knife.id}`} 
-            key={knife.id} 
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <div style={styles.card}>
-              <img 
-                src={knife.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'}
-                alt={knife.name}
-                style={styles.image}
-              />
-              <h3 style={styles.cardTitle}>{knife.name}</h3>
-              <p style={styles.steel}>{knife.steel}</p>
-              <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
-              <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
-                {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
-              </span>
-            </div>
-          </Link>
+          <div key={knife.id} style={styles.card}>
+            <img 
+              src={knife.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'}
+              alt={knife.name}
+              style={styles.image}
+            />
+            <h3 style={styles.cardTitle}>{knife.name}</h3>
+            <p style={styles.steel}>{knife.steel}</p>
+            <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
+            <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
+              {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
+            </span>
+          </div>
         ))}
       </div>
       
@@ -151,7 +144,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '1rem',
     backgroundColor: 'white',
     transition: 'box-shadow 0.2s',
-    cursor: 'pointer',
   },
   image: {
     width: '100%',
@@ -246,7 +238,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-// Добавляем анимацию pulse (если нет в index.css)
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
   @keyframes pulse {
