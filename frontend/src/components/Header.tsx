@@ -65,17 +65,22 @@ export function Header() {
                 </div>
               </button>
               {menuOpen && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/profile" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
-                    👤 Мой профиль
-                  </Link>
-                  <Link to="/favorites" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
-                    ❤️ Избранное
-                  </Link>
-                  <button onClick={handleLogout} style={styles.dropdownButton}>
-                    🚪 Выйти
-                  </button>
-                </div>
+                 <div style={styles.dropdownMenu}>
+    <Link to="/profile" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+      👤 Мой профиль
+    </Link>
+    <Link to="/favorites" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+      ❤️ Избранное
+    </Link>
+    {user?.role === 'ADMIN' && (
+      <Link to="/admin" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+        👑 Админ-панель
+      </Link>
+    )}
+    <button onClick={handleLogout} style={styles.dropdownButton}>
+      🚪 Выйти
+    </button>
+  </div>
               )}
             </div>
           ) : (

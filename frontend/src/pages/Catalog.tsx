@@ -26,12 +26,12 @@ export function Catalog() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState('');
 
-  // Временные значения фильтров (то, что видит пользователь в полях)
+  // Временные значения фильтров
   const [tempPriceMin, setTempPriceMin] = useState('');
   const [tempPriceMax, setTempPriceMax] = useState('');
   const [tempCategory, setTempCategory] = useState('');
 
-  // Реальные значения фильтров (то, что отправляется в запрос)
+  // Реальные значения фильтров
   const [activePriceMin, setActivePriceMin] = useState('');
   const [activePriceMax, setActivePriceMax] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
@@ -88,12 +88,45 @@ export function Catalog() {
   };
 
   const handleFavoriteClick = (e: React.MouseEvent, knifeId: number) => {
-    e.preventDefault();  // чтобы не переходить по ссылке
+    e.preventDefault();
     e.stopPropagation();
     if (favorites.includes(knifeId)) {
       dispatch(removeFromFavorites(knifeId));
     } else {
       dispatch(addToFavorites(knifeId));
+    }
+  };
+
+  const showToast = (message: string) => {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = '#333';
+    toast.style.color = 'white';
+    toast.style.padding = '10px 20px';
+    toast.style.borderRadius = '8px';
+    toast.style.zIndex = '9999';
+    toast.style.fontSize = '14px';
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.remove();
+    }, 2000);
+  };
+
+  const handleCompareClick = (e: React.MouseEvent, knifeId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const saved = JSON.parse(localStorage.getItem('compareIds') || '[]');
+    if (!saved.includes(knifeId) && saved.length < 4) {
+      localStorage.setItem('compareIds', JSON.stringify([...saved, knifeId]));
+      showToast('✅ Добавлено в сравнение');
+    } else if (saved.includes(knifeId)) {
+      showToast('ℹ️ Уже в сравнении');
+    } else if (saved.length >= 4) {
+      showToast('⚠️ Максимум 4 ножа для сравнения');
     }
   };
 
@@ -196,18 +229,28 @@ export function Catalog() {
               <h3 style={styles.cardTitle}>{knife.name}</h3>
               <p style={styles.steel}>{knife.steel}</p>
               <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
                   {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
                 </span>
-                {user && (
+                <div style={{ display: 'flex', gap: '0.25rem' }}>
                   <button
-                    onClick={(e) => handleFavoriteClick(e, knife.id)}
-                    style={styles.favoriteButton}
+                    onClick={(e) => handleCompareClick(e, knife.id)}
+                    style={styles.compareButton}
+                    title="Сравнить"
                   >
-                    {favorites.includes(knife.id) ? '❤️' : '🤍'}
+                    📊
                   </button>
-                )}
+                  {user && (
+                    <button
+                      onClick={(e) => handleFavoriteClick(e, knife.id)}
+                      style={styles.favoriteButton}
+                      title={favorites.includes(knife.id) ? 'Удалить из избранного' : 'В избранное'}
+                    >
+                      {favorites.includes(knife.id) ? '❤️' : '🤍'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </Link>
@@ -317,9 +360,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   favoriteButton: {
     background: 'none',
     border: 'none',
-    fontSize: '1.5rem',
+    fontSize: '1.25rem',
     cursor: 'pointer',
-    padding: '0 0.5rem',
+    padding: '0.25rem',
+  },
+  compareButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '1.25rem',
+    cursor: 'pointer',
+    padding: '0.25rem',
   },
   pagination: {
     display: 'flex',

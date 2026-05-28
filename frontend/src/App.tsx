@@ -12,6 +12,9 @@ import { getCurrentUser } from './services/api';
 import { setUser, setToken } from './store/authSlice';
 import { KnifeDetails } from './pages/KnifeDetails';
 import { NotFound } from './pages/NotFound';
+import { Home } from './pages/Home';
+import { Compare } from './pages/Compare';
+import { Admin } from './pages/Admin';
 
 function App() {
   const dispatch = useDispatch();
@@ -33,9 +36,15 @@ function App() {
       <Header />
       <main style={{ minHeight: '100vh', padding: '2rem 0' }}>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          {/* Публичные маршруты */}
+          <Route path="/" element={<Home />} />
+          <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:id" element={<KnifeDetails />} />
+          <Route path="/compare" element={<Compare />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          
+          {/* Приватные маршруты */}
           <Route 
             path="/profile" 
             element={
@@ -44,7 +53,6 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route path="/catalog" element={<Catalog />} />
           <Route 
             path="/favorites" 
             element={
@@ -53,8 +61,16 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route path="/compare" element={<div style={{ textAlign: 'center' }}>Страница сравнения (скоро)</div>} />
-          <Route path="/" element={<div style={{ textAlign: 'center' }}>Главная страница (скоро)</div>} />
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* 404 - должен быть последним */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
