@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToFavorites, removeFromFavorites, selectFavorites, fetchFavorites } from '../store/favoritesSlice';
+import type { RootState } from '../store';
 
 interface Knife {
   id: number;
@@ -11,6 +14,10 @@ interface Knife {
 }
 
 export function Catalog() {
+  const dispatch = useDispatch();
+  const favorites = useSelector(selectFavorites);
+  const { user } = useSelector((state: RootState) => state.auth);
+  
   const [searchParams] = useSearchParams();
   const [knives, setKnives] = useState<Knife[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +37,13 @@ export function Catalog() {
   const [activeCategory, setActiveCategory] = useState('');
 
   const searchQuery = searchParams.get('search') || '';
+
+  // Загружаем избранное при авторизации
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchFavorites());
+    }
+  }, [user, dispatch]);
 
   useEffect(() => {
     const fetchKnives = async () => {
@@ -73,6 +87,16 @@ export function Catalog() {
     setPage(1);
   };
 
+  const handleFavoriteClick = (e: React.MouseEvent, knifeId: number) => {
+    e.preventDefault();  // чтобы не переходить по ссылке
+    e.stopPropagation();
+    if (favorites.includes(knifeId)) {
+      dispatch(removeFromFavorites(knifeId));
+    } else {
+      dispatch(addToFavorites(knifeId));
+    }
+  };
+
   if (loading) {
     return (
       <div style={styles.container}>
@@ -111,50 +135,50 @@ export function Catalog() {
       
       {/* Блок фильтров */}
       <div style={styles.filters}>
-  <input
-    type="number"
-    placeholder="Цена от"
-    value={tempPriceMin}
-    onChange={(e) => setTempPriceMin(e.target.value)}
-    style={styles.filterInput}
-  />
-  <input
-    type="number"
-    placeholder="Цена до"
-    value={tempPriceMax}
-    onChange={(e) => setTempPriceMax(e.target.value)}
-    style={styles.filterInput}
-  />
-  <select
-    value={tempCategory}
-    onChange={(e) => setTempCategory(e.target.value)}
-    style={styles.filterSelect}
-  >
-    <option value="">Все категории</option>
-    <option value="охотничьи">Охотничьи</option>
-    <option value="кухонные">Кухонные</option>
-    <option value="тактические">Тактические</option>
-  </select>
-  <button onClick={applyFilters} style={styles.filterButton}>
-    Применить
-  </button>
+        <input
+          type="number"
+          placeholder="Цена от"
+          value={tempPriceMin}
+          onChange={(e) => setTempPriceMin(e.target.value)}
+          style={styles.filterInput}
+        />
+        <input
+          type="number"
+          placeholder="Цена до"
+          value={tempPriceMax}
+          onChange={(e) => setTempPriceMax(e.target.value)}
+          style={styles.filterInput}
+        />
+        <select
+          value={tempCategory}
+          onChange={(e) => setTempCategory(e.target.value)}
+          style={styles.filterSelect}
+        >
+          <option value="">Все категории</option>
+          <option value="охотничьи">Охотничьи</option>
+          <option value="кухонные">Кухонные</option>
+          <option value="тактические">Тактические</option>
+        </select>
+        <button onClick={applyFilters} style={styles.filterButton}>
+          Применить
+        </button>
 
-  {/* Сортировка */}
-  <select
-    value={sortBy}
-    onChange={(e) => {
-      setSortBy(e.target.value);
-      setPage(1);
-    }}
-    style={styles.filterSelect}
-  >
-    <option value="">Без сортировки</option>
-    <option value="price_asc">Цена: по возрастанию</option>
-    <option value="price_desc">Цена: по убыванию</option>
-    <option value="name_asc">Название: А-Я</option>
-    <option value="name_desc">Название: Я-А</option>
-  </select>
-</div>
+        {/* Сортировка */}
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+            setPage(1);
+          }}
+          style={styles.filterSelect}
+        >
+          <option value="">Без сортировки</option>
+          <option value="price_asc">Цена: по возрастанию</option>
+          <option value="price_desc">Цена: по убыванию</option>
+          <option value="name_asc">Название: А-Я</option>
+          <option value="name_desc">Название: Я-А</option>
+        </select>
+      </div>
       
       <div style={styles.grid}>
         {knives.map((knife) => (
@@ -172,9 +196,19 @@ export function Catalog() {
               <h3 style={styles.cardTitle}>{knife.name}</h3>
               <p style={styles.steel}>{knife.steel}</p>
               <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
-              <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
-                {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
-              </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
+                  {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
+                </span>
+                {user && (
+                  <button
+                    onClick={(e) => handleFavoriteClick(e, knife.id)}
+                    style={styles.favoriteButton}
+                  >
+                    {favorites.includes(knife.id) ? '❤️' : '🤍'}
+                  </button>
+                )}
+              </div>
             </div>
           </Link>
         ))}
@@ -279,6 +313,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   outOfStock: {
     color: '#ef4444',
     fontSize: '0.875rem',
+  },
+  favoriteButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '1.5rem',
+    cursor: 'pointer',
+    padding: '0 0.5rem',
   },
   pagination: {
     display: 'flex',

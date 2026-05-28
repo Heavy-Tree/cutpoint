@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../services/api';
+import { useDispatch } from 'react-redux';
+import { login as loginApi } from '../services/api';
+import { setUser, setToken } from '../store/authSlice';
 
 export function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +18,10 @@ export function Login() {
     setLoading(true);
     
     try {
-      await login(email, password);
+      const user = await loginApi(email, password);
+      dispatch(setUser(user));
+      const token = localStorage.getItem('token');
+      if (token) dispatch(setToken(token));
       navigate('/profile');
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed';

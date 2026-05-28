@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine
 from app.api import auth, knives
+from app.api import auth, knives, favorites
 
 # Создание таблиц
 Base.metadata.create_all(bind=engine)
@@ -26,6 +27,7 @@ app.add_middleware(
 # Регистрация роутеров
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(knives.router, prefix="/api/knives", tags=["knives"])
+app.include_router(favorites.router, prefix="/api/favorites", tags=["favorites"])
 
 @app.get("/")
 def root():

@@ -6,6 +6,7 @@ import { logout } from '../store/authSlice';
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -20,6 +21,7 @@ export function Header() {
 
   const handleLogout = () => {
     dispatch(logout());
+    setMenuOpen(false);
     navigate('/login');
   };
 
@@ -34,7 +36,7 @@ export function Header() {
         {/* Навигация */}
         <nav style={styles.nav}>
           <Link to="/catalog" style={styles.navLink}>Каталог</Link>
-          <Link to="/favorites" style={styles.navLink}>Избранное</Link>
+          {user && <Link to="/favorites" style={styles.navLink}>Избранное</Link>}
           <Link to="/compare" style={styles.navLink}>Сравнение</Link>
         </nav>
 
@@ -53,12 +55,29 @@ export function Header() {
         {/* Пользовательское меню */}
         <div style={styles.userMenu}>
           {user ? (
-            <>
-              <span style={styles.userName}>Привет, {user.name}!</span>
-              <button onClick={handleLogout} style={styles.logoutButton}>
-                Выйти
+            <div style={styles.profileWrapper}>
+              <button 
+                onClick={() => setMenuOpen(!menuOpen)} 
+                style={styles.profileButton}
+              >
+                <div style={styles.avatar}>
+                  {user.name?.charAt(0).toUpperCase() || 'U'}
+                </div>
               </button>
-            </>
+              {menuOpen && (
+                <div style={styles.dropdownMenu}>
+                  <Link to="/profile" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                    👤 Мой профиль
+                  </Link>
+                  <Link to="/favorites" style={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                    ❤️ Избранное
+                  </Link>
+                  <button onClick={handleLogout} style={styles.dropdownButton}>
+                    🚪 Выйти
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <Link to="/login" style={styles.loginLink}>Войти</Link>
           )}
@@ -68,7 +87,6 @@ export function Header() {
   );
 }
 
-// Стили (временно inline, потом можно вынести в CSS)
 const styles: { [key: string]: React.CSSProperties } = {
   header: {
     backgroundColor: '#1f2937',
@@ -126,24 +144,67 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     gap: '1rem',
+    position: 'relative',
   },
-  userName: {
-    color: '#e5e7eb',
-    fontSize: '0.875rem',
+  profileWrapper: {
+    position: 'relative',
   },
-  logoutButton: {
-    backgroundColor: '#dc2626',
-    color: 'white',
+  profileButton: {
+    background: 'none',
     border: 'none',
-    padding: '0.25rem 0.75rem',
-    borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '0.875rem',
+    padding: 0,
+  },
+  avatar: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    backgroundColor: '#2563eb',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: '50px',
+    right: 0,
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    minWidth: '180px',
+    overflow: 'hidden',
+    zIndex: 1000,
+  },
+  dropdownItem: {
+    display: 'block',
+    padding: '0.75rem 1rem',
+    color: '#374151',
+    textDecoration: 'none',
+    transition: 'background-color 0.2s',
+    cursor: 'pointer',
+    textAlign: 'left',
+    borderBottom: '1px solid #e5e7eb',
+  },
+  dropdownButton: {
+    display: 'block',
+    width: '100%',
+    padding: '0.75rem 1rem',
+    color: '#374151',
+    background: 'none',
+    border: 'none',
+    textAlign: 'left',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    transition: 'background-color 0.2s',
   },
   loginLink: {
     color: '#e5e7eb',
     textDecoration: 'none',
-    padding: '0.25rem 0.75rem',
+    padding: '0.5rem 1rem',
     backgroundColor: '#2563eb',
     borderRadius: '4px',
   },
