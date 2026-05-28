@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 
 interface Knife {
   id: number;
@@ -18,6 +18,16 @@ export function Catalog() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Временные значения фильтров (то, что видит пользователь в полях)
+  const [tempPriceMin, setTempPriceMin] = useState('');
+  const [tempPriceMax, setTempPriceMax] = useState('');
+  const [tempCategory, setTempCategory] = useState('');
+
+  // Реальные значения фильтров (то, что отправляется в запрос)
+  const [activePriceMin, setActivePriceMin] = useState('');
+  const [activePriceMax, setActivePriceMax] = useState('');
+  const [activeCategory, setActiveCategory] = useState('');
+
   const searchQuery = searchParams.get('search') || '';
 
   useEffect(() => {
@@ -27,7 +37,12 @@ export function Catalog() {
       
       try {
         const token = localStorage.getItem('token');
-        const url = `http://localhost:8000/api/knives?page=${page}&limit=6${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ''}`;
+        let url = `http://localhost:8000/api/knives?page=${page}&limit=6`;
+
+        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+        if (activePriceMin) url += `&min_price=${activePriceMin}`;
+        if (activePriceMax) url += `&max_price=${activePriceMax}`;
+        if (activeCategory) url += `&category=${activeCategory}`;
         
         const response = await fetch(url, {
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -47,7 +62,14 @@ export function Catalog() {
     };
     
     fetchKnives();
-  }, [page, searchQuery]);
+  }, [page, searchQuery, activePriceMin, activePriceMax, activeCategory]);
+
+  const applyFilters = () => {
+    setActivePriceMin(tempPriceMin);
+    setActivePriceMax(tempPriceMax);
+    setActiveCategory(tempCategory);
+    setPage(1);
+  };
 
   if (loading) {
     return (
@@ -85,21 +107,58 @@ export function Catalog() {
       <h2>Каталог ножей</h2>
       {searchQuery && <p>Результаты поиска: "{searchQuery}"</p>}
       
+      {/* Блок фильтров */}
+      <div style={styles.filters}>
+        <input
+          type="number"
+          placeholder="Цена от"
+          value={tempPriceMin}
+          onChange={(e) => setTempPriceMin(e.target.value)}
+          style={styles.filterInput}
+        />
+        <input
+          type="number"
+          placeholder="Цена до"
+          value={tempPriceMax}
+          onChange={(e) => setTempPriceMax(e.target.value)}
+          style={styles.filterInput}
+        />
+        <select
+          value={tempCategory}
+          onChange={(e) => setTempCategory(e.target.value)}
+          style={styles.filterSelect}
+        >
+          <option value="">Все категории</option>
+          <option value="охотничьи">Охотничьи</option>
+          <option value="кухонные">Кухонные</option>
+          <option value="тактические">Тактические</option>
+        </select>
+        <button onClick={applyFilters} style={styles.filterButton}>
+          Применить
+        </button>
+      </div>
+      
       <div style={styles.grid}>
         {knives.map((knife) => (
-          <div key={knife.id} style={styles.card}>
-            <img 
-              src={knife.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'}
-              alt={knife.name}
-              style={styles.image}
-            />
-            <h3 style={styles.cardTitle}>{knife.name}</h3>
-            <p style={styles.steel}>{knife.steel}</p>
-            <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
-            <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
-              {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
-            </span>
-          </div>
+          <Link 
+            to={`/catalog/${knife.id}`} 
+            key={knife.id} 
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            <div style={styles.card}>
+              <img 
+                src={knife.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'}
+                alt={knife.name}
+                style={styles.image}
+              />
+              <h3 style={styles.cardTitle}>{knife.name}</h3>
+              <p style={styles.steel}>{knife.steel}</p>
+              <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
+              <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
+                {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
+              </span>
+            </div>
+          </Link>
         ))}
       </div>
       
@@ -132,6 +191,32 @@ const styles: { [key: string]: React.CSSProperties } = {
     margin: '0 auto',
     padding: '0 1rem',
   },
+  filters: {
+    display: 'flex',
+    gap: '1rem',
+    marginBottom: '1.5rem',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  filterInput: {
+    padding: '0.5rem',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    width: '120px',
+  },
+  filterSelect: {
+    padding: '0.5rem',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+  },
+  filterButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#2563eb',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
@@ -144,6 +229,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '1rem',
     backgroundColor: 'white',
     transition: 'box-shadow 0.2s',
+    cursor: 'pointer',
   },
   image: {
     width: '100%',

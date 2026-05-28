@@ -4,6 +4,7 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Catalog } from './pages/Catalog';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route path="/catalog" element={<Catalog />} />
           {/* Временные заглушки для новых страниц */}
           <Route path="/catalog" element={<div style={{ textAlign: 'center' }}>Страница каталога (скоро)</div>} />
           <Route path="/favorites" element={<div style={{ textAlign: 'center' }}>Страница избранного (скоро)</div>} />

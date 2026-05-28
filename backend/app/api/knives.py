@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from app.models import Knife, Category
 from typing import List
 import json
 
@@ -14,8 +15,36 @@ def slugify(text: str) -> str:
     return text.lower().replace(" ", "-").replace("ё", "e")[:190]
 
 @router.get("/", response_model=List[KnifeResponse])
-def get_knives(skip: int = Query(0, ge=0), limit: int = Query(20, ge=1, le=100), db: Session = Depends(get_db)):
-    knives = db.query(Knife).offset(skip).limit(limit).all()
+def get_knives(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    search: str = Query(None),
+    min_price: float = Query(None),
+    max_price: float = Query(None),
+    category: str = Query(None),
+    db: Session = Depends(get_db)
+):
+    query = db.query(Knife)
+    
+    # Поиск по названию или описанию
+    if search:
+        query = query.filter(
+            Knife.name.contains(search) | Knife.description.contains(search)
+        )
+    
+    # Фильтр по минимальной цене
+    if min_price is not None:
+        query = query.filter(Knife.price >= min_price)
+    
+    # Фильтр по максимальной цене
+    if max_price is not None:
+        query = query.filter(Knife.price <= max_price)
+    
+    # Фильтр по категории (поиск по названию категории)
+    if category:
+        query = query.join(Knife.category).filter(Category.name == category)
+    
+    knives = query.offset(skip).limit(limit).all()
     return [KnifeResponse.model_validate(k) for k in knives]
 
 @router.get("/{knife_id}", response_model=KnifeResponse)

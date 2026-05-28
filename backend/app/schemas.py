@@ -1,7 +1,8 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
+import json
 
 class Role(str, Enum):
     USER = "USER"
@@ -56,6 +57,19 @@ class KnifeResponse(BaseModel):
     images: List[str]
     views: int
     created_at: datetime
+    
+    @field_validator('images', mode='before')
+    @classmethod
+    def parse_images(cls, v):
+        """Конвертирует строку из БД в список Python"""
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                if v.startswith('["') and v.endswith('"]'):
+                    return json.loads(v)
+                return []
+        return v
     
     class Config:
         from_attributes = True
