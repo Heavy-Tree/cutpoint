@@ -15,7 +15,7 @@ router = APIRouter()
 def slugify(text: str) -> str:
     return text.lower().replace(" ", "-").replace("ё", "e")[:190]
 
-@router.get("/", response_model=List[KnifeResponse])
+@router.get("/", response_model=dict)
 def get_knives(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
@@ -26,7 +26,6 @@ def get_knives(
     sort_by: str = Query(None),
     ids: str = Query(None),
     db: Session = Depends(get_db)
-    
 ):
     print(f"Received sort_by: {sort_by}")
     query = db.query(Knife)
@@ -55,6 +54,7 @@ def get_knives(
         if ids_list:
             query = query.filter(Knife.id.in_(ids_list))
     
+    # Сортировка
     if sort_by == "price_asc":
         query = query.order_by(Knife.price.asc())
     elif sort_by == "price_desc":
@@ -66,8 +66,20 @@ def get_knives(
     else:
         query = query.order_by(Knife.id.desc())
 
+    # Подсчёт общего количества (для пагинации)
+    total = query.count()
+    pages = (total + limit - 1) // limit
+    
+    # Пагинация
     knives = query.offset(skip).limit(limit).all()
-    return [KnifeResponse.model_validate(k) for k in knives]
+    
+    return {
+        "data": [KnifeResponse.model_validate(k) for k in knives],
+        "total": total,
+        "page": (skip // limit) + 1,
+        "limit": limit,
+        "pages": pages
+    }
 
 @router.get("/{knife_id}", response_model=KnifeResponse)
 def get_knife(knife_id: int, db: Session = Depends(get_db)):
@@ -98,7 +110,7 @@ def create_knife(knife_data: KnifeCreate, current_user: User = Depends(get_curre
         description=knife_data.description, steel=knife_data.steel,
         blade_length=knife_data.blade_length, total_length=knife_data.total_length,
         handle_material=knife_data.handle_material, in_stock=knife_data.in_stock,
-        images=json.dumps(knife_data.images)
+        images=json.dumps(knife_data.images), category_id=knife_data.category_id
     )
     db.add(new_knife)
     db.commit()
