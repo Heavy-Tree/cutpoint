@@ -18,6 +18,7 @@ app.add_middleware(
         "http://localhost:5173",  # Vite по умолчанию
         "http://localhost:3000",   # React по умолчанию
         "http://localhost:8000",   # Бэкенд
+        "https://cutpoint-frontend.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],           # Разрешить все методы (GET, POST, PUT, DELETE)
