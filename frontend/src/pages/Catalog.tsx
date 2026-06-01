@@ -55,7 +55,7 @@ export function Catalog() {
       
       try {
         const token = localStorage.getItem('token');
-        let url = `${API_BASE_URL}/api/knives?page=${page}&limit=6`;
+        let url = `${API_BASE_URL}/api/knives?skip=${(page-1)*6}&limit=6`;
 
         if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
         if (activePriceMin) url += `&min_price=${activePriceMin}`;
