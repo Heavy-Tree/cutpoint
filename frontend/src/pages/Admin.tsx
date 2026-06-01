@@ -9,6 +9,7 @@ interface Knife {
   price: number;
   steel: string;
   in_stock: boolean;
+  images?: string[];
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -18,7 +19,7 @@ export function Admin() {
   const navigate = useNavigate();
   const [knives, setKnives] = useState<Knife[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ name: '', price: '', steel: '', in_stock: true });
+  const [form, setForm] = useState({ name: '', price: '', steel: '', in_stock: true, imageUrl: '' });
 
   useEffect(() => {
     if (!user || user.role !== 'ADMIN') {
@@ -51,10 +52,14 @@ export function Admin() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ ...form, price: parseFloat(form.price), images: [] }),
+        body: JSON.stringify({ 
+          ...form, 
+          price: parseFloat(form.price), 
+          images: form.imageUrl ? [form.imageUrl] : [] 
+        }),
       });
       if (response.ok) {
-        setForm({ name: '', price: '', steel: '', in_stock: true });
+        setForm({ name: '', price: '', steel: '', in_stock: true, imageUrl: '' });
         fetchKnives();
       }
     } catch (err) {
@@ -108,6 +113,13 @@ export function Admin() {
             value={form.steel}
             onChange={(e) => setForm({ ...form, steel: e.target.value })}
             required
+            style={styles.input}
+          />
+          <input
+            type="text"
+            placeholder="Ссылка на изображение (URL)"
+            value={form.imageUrl}
+            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
             style={styles.input}
           />
           <label style={styles.checkbox}>
