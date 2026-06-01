@@ -54,6 +54,7 @@ class KnifeCreate(BaseModel):
     handle_material: Optional[str] = None
     in_stock: bool = True
     images: List[str] = []
+    category_id: Optional[int] = None
 
 class KnifeResponse(BaseModel):
     id: int
