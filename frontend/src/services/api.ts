@@ -31,7 +31,21 @@ export const register = async (email: string, password: string, name: string) =>
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || 'Registration failed');
+    // Обработка ошибок валидации от Pydantic
+    if (error.detail) {
+      // Если detail — массив (бывает при нескольких ошибках)
+      if (Array.isArray(error.detail)) {
+        const messages = error.detail.map((err: any) => err.msg).join('; ');
+        throw new Error(messages);
+      }
+      // Если detail — строка
+      throw new Error(error.detail);
+    }
+    if (error.errors && Array.isArray(error.errors)) {
+      const messages = error.errors.map((err: any) => err.msg).join('; ');
+      throw new Error(messages);
+    }
+    throw new Error('Registration failed');
   }
   
   const data = await response.json();
