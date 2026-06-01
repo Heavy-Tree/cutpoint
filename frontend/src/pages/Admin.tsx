@@ -11,6 +11,8 @@ interface Knife {
   in_stock: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 export function Admin() {
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ export function Admin() {
 
   const fetchKnives = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/knives');
+      const response = await fetch(`${API_BASE_URL}/api/knives`);
       const data = await response.json();
       const knivesArray = Array.isArray(data) ? data : data.data || [];
       setKnives(knivesArray);
@@ -43,7 +45,7 @@ export function Admin() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:8000/api/knives', {
+      const response = await fetch(`${API_BASE_URL}/api/knives`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +65,7 @@ export function Admin() {
   const deleteKnife = async (id: number) => {
     const token = localStorage.getItem('token');
     try {
-      await fetch(`http://localhost:8000/api/knives/${id}`, {
+      await fetch(`${API_BASE_URL}/api/knives/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -148,8 +150,8 @@ export function Admin() {
                     <button onClick={() => deleteKnife(knife.id)} style={styles.deleteButton}>
                       Удалить
                     </button>
-                  </td>
-                </tr>
+                   </td>
+                 </tr>
               ))}
             </tbody>
           </table>

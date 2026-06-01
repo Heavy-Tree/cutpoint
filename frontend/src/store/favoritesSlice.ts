@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from './index';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface FavoritesState {
   items: number[];
   loading: boolean;
@@ -17,7 +19,7 @@ export const fetchFavorites = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8000/api/favorites', {
+      const response = await fetch(`${API_BASE_URL}/api/favorites`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });
       if (!response.ok) throw new Error('Failed to fetch favorites');
@@ -36,7 +38,7 @@ export const addToFavorites = createAsyncThunk(
   async (knifeId: number, { rejectWithValue, dispatch }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8000/api/favorites/${knifeId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/favorites/${knifeId}`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });
@@ -56,7 +58,7 @@ export const removeFromFavorites = createAsyncThunk(
   async (knifeId: number, { rejectWithValue, dispatch }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8000/api/favorites/${knifeId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/favorites/${knifeId}`, {
         method: 'DELETE',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });

@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToFavorites, removeFromFavorites, selectFavorites, fetchFavorites } from '../store/favoritesSlice';
 import type { RootState } from '../store';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface Knife {
   id: number;
   name: string;
@@ -46,7 +48,7 @@ export function KnifeDetails() {
       setError(null);
       
       try {
-        const response = await fetch(`http://localhost:8000/api/knives/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/knives/${id}`);
         
         if (response.status === 404) {
           navigate('/404');
@@ -72,7 +74,7 @@ export function KnifeDetails() {
   useEffect(() => {
     if (id && !hasRecordedView.current) {
       hasRecordedView.current = true;
-      fetch(`http://localhost:8000/api/knives/${id}/view`, {
+      fetch(`${API_BASE_URL}/api/knives/${id}/view`, {
         method: 'POST',
       }).catch(console.error);
     }

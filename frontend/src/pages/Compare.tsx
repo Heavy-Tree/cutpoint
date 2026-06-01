@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface Knife {
   id: number;
   name: string;
@@ -35,7 +37,7 @@ export function Compare() {
       setLoading(true);
       try {
         const idsParam = compareIds.join(',');
-        const response = await fetch(`http://localhost:8000/api/knives?ids=${idsParam}`);
+        const response = await fetch(`${API_BASE_URL}/api/knives?ids=${idsParam}`);
         const data = await response.json();
         const knivesArray = Array.isArray(data) ? data : data.data || [];
         setKnives(knivesArray);

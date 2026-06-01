@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToFavorites, removeFromFavorites, selectFavorites, fetchFavorites } from '../store/favoritesSlice';
 import type { RootState } from '../store';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface Knife {
   id: number;
   name: string;
@@ -53,7 +55,7 @@ export function Catalog() {
       
       try {
         const token = localStorage.getItem('token');
-        let url = `http://localhost:8000/api/knives?page=${page}&limit=6`;
+        let url = `${API_BASE_URL}/api/knives?page=${page}&limit=6`;
 
         if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
         if (activePriceMin) url += `&min_price=${activePriceMin}`;

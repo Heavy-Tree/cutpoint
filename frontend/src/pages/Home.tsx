@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface Knife {
   id: number;
   name: string;
@@ -16,7 +18,7 @@ export function Home() {
   useEffect(() => {
     const fetchPopular = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/knives?limit=3');
+        const response = await fetch(`${API_BASE_URL}/api/knives?limit=3`);
         const data = await response.json();
         const knivesArray = Array.isArray(data) ? data : data.data || [];
         setPopularKnives(knivesArray);

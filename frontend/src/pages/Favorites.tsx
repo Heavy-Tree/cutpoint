@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchFavorites, removeFromFavorites, selectFavorites } from '../store/favoritesSlice';
 import type { RootState } from '../store';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface Knife {
   id: number;
   name: string;
@@ -39,7 +41,7 @@ export function Favorites() {
       try {
         const token = localStorage.getItem('token');
         const idsParam = favoritesIds.join(',');
-        const response = await fetch(`http://localhost:8000/api/knives?ids=${idsParam}`, {
+        const response = await fetch(`${API_BASE_URL}/api/knives?ids=${idsParam}`, {
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         });
 
