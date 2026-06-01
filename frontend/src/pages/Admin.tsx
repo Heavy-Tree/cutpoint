@@ -9,6 +9,10 @@ interface Knife {
   price: number;
   steel: string;
   in_stock: boolean;
+  blade_length?: number;
+  total_length?: number;
+  handle_material?: string;
+  description?: string;
   images?: string[];
 }
 
@@ -26,7 +30,11 @@ export function Admin() {
     steel: '', 
     in_stock: true, 
     imageUrl: '',
-    categoryId: '' 
+    categoryId: '',
+    blade_length: '',
+    total_length: '',
+    handle_material: '',
+    description: ''
   });
 
   useEffect(() => {
@@ -77,11 +85,18 @@ export function Admin() {
           steel: form.steel,
           in_stock: form.in_stock,
           images: form.imageUrl ? [form.imageUrl] : [],
-          category_id: form.categoryId ? parseInt(form.categoryId) : null
+          category_id: form.categoryId ? parseInt(form.categoryId) : null,
+          blade_length: form.blade_length ? parseInt(form.blade_length) : null,
+          total_length: form.total_length ? parseInt(form.total_length) : null,
+          handle_material: form.handle_material || null,
+          description: form.description || null
         }),
       });
       if (response.ok) {
-        setForm({ name: '', price: '', steel: '', in_stock: true, imageUrl: '', categoryId: '' });
+        setForm({ 
+          name: '', price: '', steel: '', in_stock: true, imageUrl: '', categoryId: '',
+          blade_length: '', total_length: '', handle_material: '', description: ''
+        });
         fetchKnives();
       }
     } catch (err) {
@@ -154,6 +169,38 @@ export function Admin() {
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
+          
+          <h4 style={styles.subtitle}>Характеристики</h4>
+          
+          <input
+            type="number"
+            placeholder="Длина клинка (мм)"
+            value={form.blade_length}
+            onChange={(e) => setForm({ ...form, blade_length: e.target.value })}
+            style={styles.input}
+          />
+          <input
+            type="number"
+            placeholder="Общая длина (мм)"
+            value={form.total_length}
+            onChange={(e) => setForm({ ...form, total_length: e.target.value })}
+            style={styles.input}
+          />
+          <input
+            type="text"
+            placeholder="Материал рукояти"
+            value={form.handle_material}
+            onChange={(e) => setForm({ ...form, handle_material: e.target.value })}
+            style={styles.input}
+          />
+          <textarea
+            placeholder="Описание"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            rows={4}
+            style={styles.textarea}
+          />
+          
           <label style={styles.checkbox}>
             <input
               type="checkbox"
@@ -162,7 +209,7 @@ export function Admin() {
             />
             В наличии
           </label>
-          <button type="submit" style={styles.button}>Добавить</button>
+          <button type="submit" style={styles.button}>Добавить нож</button>
         </form>
       </div>
       
@@ -227,6 +274,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '0.5rem',
     border: '1px solid #ccc',
     borderRadius: '4px',
+  },
+  textarea: {
+    padding: '0.5rem',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    fontFamily: 'inherit',
+    resize: 'vertical',
+  },
+  subtitle: {
+    margin: '0.5rem 0 0',
+    fontSize: '1rem',
+    fontWeight: '500',
   },
   checkbox: {
     display: 'flex',
