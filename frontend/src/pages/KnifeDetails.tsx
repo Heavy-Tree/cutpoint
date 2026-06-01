@@ -144,7 +144,7 @@ export function KnifeDetails() {
         
         <div style={styles.infoSection}>
           <h1 style={styles.title}>{knife.name}</h1>
-          <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
+          <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
           
           <div style={styles.favoriteSection}>
             <button onClick={handleFavorite} style={styles.favoriteButton}>

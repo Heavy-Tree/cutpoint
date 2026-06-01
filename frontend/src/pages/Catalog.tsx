@@ -231,7 +231,7 @@ export function Catalog() {
               />
               <h3 style={styles.cardTitle}>{knife.name}</h3>
               <p style={styles.steel}>{knife.steel}</p>
-              <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
+              <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
                   {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}

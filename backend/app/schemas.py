@@ -3,6 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 import json
+import re
 
 class Role(str, Enum):
     USER = "USER"
@@ -12,6 +13,17 @@ class UserRegister(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=6)
     name: str = Field(..., min_length=2)
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if not re.search(r'[A-Z]', v):
+            raise ValueError('Пароль должен содержать хотя бы одну заглавную букву')
+        if not re.search(r'[0-9]', v):
+            raise ValueError('Пароль должен содержать хотя бы одну цифру')
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', v):
+            raise ValueError('Пароль должен содержать хотя бы один спецсимвол (!@#$%^&*)')
+        return v
 
 class UserLogin(BaseModel):
     email: EmailStr

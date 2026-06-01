@@ -62,7 +62,7 @@ export function Home() {
                     style={styles.cardImage} 
                   />
                   <h3 style={styles.cardTitle}>{knife.name}</h3>
-                  <p style={styles.cardPrice}>{knife.price.toLocaleString()} ₽</p>
+                  <p style={styles.cardPrice}>{knife.price.toLocaleString()} Br</p>
                   <p style={styles.cardSteel}>{knife.steel}</p>
                 </div>
               </Link>

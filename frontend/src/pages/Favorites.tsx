@@ -110,7 +110,7 @@ export function Favorites() {
               />
               <h3 style={styles.cardTitle}>{knife.name}</h3>
               <p style={styles.steel}>{knife.steel}</p>
-              <p style={styles.price}>{knife.price.toLocaleString()} ₽</p>
+              <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
             </Link>
             <div style={styles.cardFooter}>
               <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>

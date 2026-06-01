@@ -234,7 +234,7 @@ export function Admin() {
                 <tr key={knife.id}>
                   <td>{knife.id}</td>
                   <td>{knife.name}</td>
-                  <td>{knife.price.toLocaleString()} ₽</td>
+                  <td>{knife.price.toLocaleString()} Br</td>
                   <td>{knife.steel}</td>
                   <td>{knife.in_stock ? '✅' : '❌'}</td>
                   <td>

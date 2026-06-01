@@ -102,7 +102,7 @@ export function Compare() {
         <div style={styles.tableRow}>
           <div style={styles.tableLabel}>Цена</div>
           {knives.map(knife => (
-            <div key={knife.id} style={styles.tableValue}>{knife.price.toLocaleString()} ₽</div>
+            <div key={knife.id} style={styles.tableValue}>{knife.price.toLocaleString()} Br</div>
           ))}
         </div>
         
