@@ -17,12 +17,16 @@ class UserRegister(BaseModel):
     @field_validator('password')
     @classmethod
     def validate_password(cls, v: str) -> str:
+        errors = []
         if not re.search(r'[A-Z]', v):
-            raise ValueError('Пароль должен содержать хотя бы одну заглавную букву')
+            errors.append('Пароль должен содержать хотя бы одну заглавную букву')
         if not re.search(r'[0-9]', v):
-            raise ValueError('Пароль должен содержать хотя бы одну цифру')
+            errors.append('Пароль должен содержать хотя бы одну цифру')
         if not re.search(r'[!@#$%^&*(),.?":{}|<>]', v):
-            raise ValueError('Пароль должен содержать хотя бы один спецсимвол (!@#$%^&*)')
+            errors.append('Пароль должен содержать хотя бы один спецсимвол (!@#$%^&*)')
+        
+        if errors:
+            raise ValueError('; '.join(errors))
         return v
 
 class UserLogin(BaseModel):
