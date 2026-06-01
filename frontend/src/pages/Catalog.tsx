@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { addToFavorites, removeFromFavorites, selectFavorites, fetchFavorites } from '../store/favoritesSlice';
 import type { RootState } from '../store';
 
