@@ -73,3 +73,11 @@ class KnifeResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class CategoryResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    
+    class Config:
+        from_attributes = True

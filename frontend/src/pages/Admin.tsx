@@ -18,8 +18,16 @@ export function Admin() {
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const [knives, setKnives] = useState<Knife[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ name: '', price: '', steel: '', in_stock: true, imageUrl: '' });
+  const [form, setForm] = useState({ 
+    name: '', 
+    price: '', 
+    steel: '', 
+    in_stock: true, 
+    imageUrl: '',
+    categoryId: '' 
+  });
 
   useEffect(() => {
     if (!user || user.role !== 'ADMIN') {
@@ -27,6 +35,7 @@ export function Admin() {
       return;
     }
     fetchKnives();
+    fetchCategories();
   }, [user, navigate]);
 
   const fetchKnives = async () => {
@@ -42,6 +51,16 @@ export function Admin() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/categories`);
+      const data = await response.json();
+      setCategories(Array.isArray(data) ? data : data.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const createKnife = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -53,13 +72,16 @@ export function Admin() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ 
-          ...form, 
-          price: parseFloat(form.price), 
-          images: form.imageUrl ? [form.imageUrl] : [] 
+          name: form.name,
+          price: parseFloat(form.price),
+          steel: form.steel,
+          in_stock: form.in_stock,
+          images: form.imageUrl ? [form.imageUrl] : [],
+          category_id: form.categoryId ? parseInt(form.categoryId) : null
         }),
       });
       if (response.ok) {
-        setForm({ name: '', price: '', steel: '', in_stock: true, imageUrl: '' });
+        setForm({ name: '', price: '', steel: '', in_stock: true, imageUrl: '', categoryId: '' });
         fetchKnives();
       }
     } catch (err) {
@@ -122,6 +144,16 @@ export function Admin() {
             onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
             style={styles.input}
           />
+          <select
+            value={form.categoryId}
+            onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+            style={styles.input}
+          >
+            <option value="">Без категории</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
           <label style={styles.checkbox}>
             <input
               type="checkbox"
