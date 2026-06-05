@@ -216,7 +216,7 @@ export function Catalog() {
         </select>
       </div>
       
-      <div style={styles.grid}>
+      <div style={styles.grid} className="catalog-grid">
         {knives.map((knife) => (
           <Link 
             to={`/catalog/${knife.id}`} 
@@ -224,14 +224,16 @@ export function Catalog() {
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             <div style={styles.card}>
-              <img 
-                src={knife.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'}
-                alt={knife.name}
-                style={styles.image}
-              />
-              <h3 style={styles.cardTitle}>{knife.name}</h3>
-              <p style={styles.steel}>{knife.steel}</p>
-              <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
+              <div style={styles.cardContent}>
+                <img 
+                  src={knife.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'}
+                  alt={knife.name}
+                  style={styles.image}
+                />
+                <h3 style={styles.cardTitle}>{knife.name}</h3>
+                <p style={styles.steel}>{knife.steel}</p>
+                <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
+              </div>
               <div style={styles.cardActions}>
                 <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
                   {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
@@ -329,10 +331,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: 'white',
     transition: 'box-shadow 0.2s',
     cursor: 'pointer',
-    height: '100%',
-    minHeight: '360px',
+    height: '380px',
     display: 'flex',
     flexDirection: 'column',
+    overflow: 'hidden',
+  },
+  cardContent: {
+    flex: 1,
+    overflowY: 'auto',
+    marginBottom: '0.5rem',
+    paddingRight: '0.25rem',
   },
   image: {
     width: '100%',
@@ -466,6 +474,18 @@ styleSheet.textContent = `
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
+  }
+  
+  @media (max-width: 900px) {
+    .catalog-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 1rem !important;
+    }
+  }
+  @media (max-width: 600px) {
+    .catalog-grid {
+      grid-template-columns: 1fr !important;
+    }
   }
 `;
 document.head.appendChild(styleSheet);
