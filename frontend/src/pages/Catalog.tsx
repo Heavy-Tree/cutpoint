@@ -323,6 +323,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '1.5rem',
     marginTop: '1.5rem',
     marginBottom: '2rem',
+    gridAutoRows: 'minmax(360px, auto)',
   },
   card: {
     border: '1px solid #e5e7eb',
