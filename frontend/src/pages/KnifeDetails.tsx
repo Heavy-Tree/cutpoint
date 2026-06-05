@@ -175,15 +175,15 @@ export function KnifeDetails() {
                 <tr>
                   <td style={styles.tableLabel}>Общая длина</td>
                   <td style={styles.tableValue}>{knife.total_length} мм</td>
-                 </tr>
+                </tr>
                 <tr>
                   <td style={styles.tableLabel}>Материал рукояти</td>
                   <td style={styles.tableValue}>{knife.handle_material}</td>
-                 </tr>
+                </tr>
                 <tr>
                   <td style={styles.tableLabel}>Просмотров</td>
                   <td style={styles.tableValue}>{knife.views}</td>
-                 </tr>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -353,12 +353,18 @@ styleSheet.textContent = `
     .knife-details-card {
       grid-template-columns: 1fr !important;
       padding: 1rem !important;
+      gap: 1rem !important;
     }
     .knife-details-image {
-      max-height: 300px !important;
+      max-height: 250px !important;
+    }
+    .knife-details-image img {
+      max-height: 200px !important;
+      object-fit: contain;
     }
     .knife-details-title {
       text-align: center !important;
+      font-size: 1.25rem !important;
     }
     .knife-details-price {
       text-align: center !important;
@@ -371,6 +377,12 @@ styleSheet.textContent = `
     }
     .knife-details-container {
       padding: 1rem !important;
+    }
+    .favoriteSection {
+      justify-content: center;
+    }
+    .infoSection {
+      margin-top: 0;
     }
   }
 `;

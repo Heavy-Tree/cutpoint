@@ -232,7 +232,7 @@ export function Catalog() {
               <h3 style={styles.cardTitle}>{knife.name}</h3>
               <p style={styles.steel}>{knife.steel}</p>
               <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={styles.cardActions}>
                 <span style={knife.in_stock ? styles.inStock : styles.outOfStock}>
                   {knife.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
                 </span>
@@ -287,7 +287,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   container: {
     maxWidth: '1200px',
     margin: '0 auto',
-    padding: '0 1rem',
+    padding: '0 1rem 2rem 1rem',
   },
   filters: {
     display: 'flex',
@@ -320,48 +320,61 @@ const styles: { [key: string]: React.CSSProperties } = {
     gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
     gap: '1.5rem',
     marginTop: '1.5rem',
+    marginBottom: '2rem',
   },
   card: {
-  border: '1px solid #e5e7eb',
-  borderRadius: '8px',
-  padding: '1rem',
-  backgroundColor: 'white',
-  transition: 'box-shadow 0.2s',
-  cursor: 'pointer',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
+    border: '1px solid #e5e7eb',
+    borderRadius: '8px',
+    padding: '1rem',
+    backgroundColor: 'white',
+    transition: 'box-shadow 0.2s',
+    cursor: 'pointer',
+    height: '100%',
+    minHeight: '360px',
+    display: 'flex',
+    flexDirection: 'column',
   },
-image: {
-  width: '100%',
-  height: '150px',
-  objectFit: 'cover',
-  borderRadius: '4px',
-  backgroundColor: '#f3f4f6',
-  flexShrink: 0,
-},
-cardTitle: {
-  fontSize: '1.125rem',
-  fontWeight: '600',
-  margin: '0.75rem 0 0.25rem',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  display: '-webkit-box',
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: 'vertical',
-  lineHeight: '1.4',
-  height: '2.8rem',
-},
+  image: {
+    width: '100%',
+    height: '150px',
+    objectFit: 'cover',
+    borderRadius: '4px',
+    backgroundColor: '#f3f4f6',
+    flexShrink: 0,
+  },
+  cardTitle: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    margin: '0.75rem 0 0.25rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    lineHeight: '1.3',
+    height: '2.6rem',
+    flexShrink: 0,
+  },
   steel: {
     fontSize: '0.875rem',
     color: '#6b7280',
     margin: '0.25rem 0',
+    flexShrink: 0,
   },
   price: {
     fontSize: '1.25rem',
     fontWeight: 'bold',
     color: '#2563eb',
     margin: '0.5rem 0',
+    flexShrink: 0,
+  },
+  cardActions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginTop: 'auto',
+    paddingTop: '0.75rem',
   },
   inStock: {
     color: '#10b981',
@@ -390,8 +403,9 @@ cardTitle: {
     justifyContent: 'center',
     alignItems: 'center',
     gap: '1rem',
-    marginTop: '2rem',
-    paddingBottom: '2rem',
+    marginTop: '1rem',
+    paddingBottom: '1rem',
+    flexWrap: 'wrap',
   },
   pageButton: {
     padding: '0.5rem 1rem',
