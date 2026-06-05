@@ -12,6 +12,8 @@ export function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,27 +73,45 @@ export function Register() {
           
           <div style={styles.field}>
             <label style={styles.label}>Пароль</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              pattern={PASSWORD_PATTERN}
-              title="Пароль должен содержать: заглавную букву, цифру и спецсимвол (!@#$%^&*)"
-              style={styles.input}
-            />
+            <div style={styles.passwordWrapper}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                pattern={PASSWORD_PATTERN}
+                title="Пароль должен содержать: заглавную букву, цифру и спецсимвол (!@#$%^&*)"
+                style={styles.input}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={styles.eyeButton}
+              >
+                {showPassword ? '🔒' : '👁'}
+              </button>
+            </div>
           </div>
           
           <div style={styles.field}>
             <label style={styles.label}>Подтверждение пароля</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              style={styles.input}
-            />
+            <div style={styles.passwordWrapper}>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                style={styles.input}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.eyeButton}
+              >
+                {showConfirmPassword ? '🔒' : '👁'}
+              </button>
+            </div>
           </div>
           
           <button
@@ -157,6 +177,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '0.375rem',
     fontSize: '1rem',
     boxSizing: 'border-box',
+  },
+  passwordWrapper: {
+    position: 'relative',
+    width: '100%',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: '8px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '1.2rem',
   },
   button: {
     width: '100%',

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Header } from './components/Header';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -15,9 +15,11 @@ import { NotFound } from './pages/NotFound';
 import { Home } from './pages/Home';
 import { Compare } from './pages/Compare';
 import { Admin } from './pages/Admin';
+import type { RootState } from './store';
 
 function App() {
   const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -41,8 +43,14 @@ function App() {
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:id" element={<KnifeDetails />} />
           <Route path="/compare" element={<Compare />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          
+          {/* Редиректы для авторизованных */}
+          {user && <Route path="/login" element={<Navigate to="/" replace />} />}
+          {user && <Route path="/register" element={<Navigate to="/" replace />} />}
+          
+          {/* Маршруты аутентификации (только для неавторизованных) */}
+          {!user && <Route path="/login" element={<Login />} />}
+          {!user && <Route path="/register" element={<Register />} />}
           
           {/* Приватные маршруты */}
           <Route 

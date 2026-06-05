@@ -119,13 +119,13 @@ export function KnifeDetails() {
   if (!knife) return null;
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="knife-details-container">
       <button onClick={() => navigate(-1)} style={styles.backButton}>
         ← Назад
       </button>
       
-      <div style={styles.card}>
-        <div style={styles.imageSection}>
+      <div style={styles.card} className="knife-details-card">
+        <div style={styles.imageSection} className="knife-details-image">
           <img src={mainImage} alt={knife.name} style={styles.mainImage} />
           {knife.images && knife.images.length > 1 && (
             <div style={styles.thumbnails}>
@@ -143,8 +143,8 @@ export function KnifeDetails() {
         </div>
         
         <div style={styles.infoSection}>
-          <h1 style={styles.title}>{knife.name}</h1>
-          <p style={styles.price}>{knife.price.toLocaleString()} Br</p>
+          <h1 style={styles.title} className="knife-details-title">{knife.name}</h1>
+          <p style={styles.price} className="knife-details-price">{knife.price.toLocaleString()} Br</p>
           
           <div style={styles.favoriteSection}>
             <button onClick={handleFavorite} style={styles.favoriteButton}>
@@ -155,14 +155,14 @@ export function KnifeDetails() {
             </span>
           </div>
           
-          <div style={styles.section}>
+          <div style={styles.section} className="knife-details-section">
             <h3>Описание</h3>
             <p style={styles.description}>{knife.description || 'Описание отсутствует'}</p>
           </div>
           
           <div style={styles.section}>
             <h3>Характеристики</h3>
-            <table style={styles.table}>
+            <table style={styles.table} className="knife-details-table">
               <tbody>
                 <tr>
                   <td style={styles.tableLabel}>Сталь</td>
@@ -175,15 +175,15 @@ export function KnifeDetails() {
                 <tr>
                   <td style={styles.tableLabel}>Общая длина</td>
                   <td style={styles.tableValue}>{knife.total_length} мм</td>
-                </tr>
+                 </tr>
                 <tr>
                   <td style={styles.tableLabel}>Материал рукояти</td>
                   <td style={styles.tableValue}>{knife.handle_material}</td>
-                </tr>
+                 </tr>
                 <tr>
                   <td style={styles.tableLabel}>Просмотров</td>
                   <td style={styles.tableValue}>{knife.views}</td>
-                </tr>
+                 </tr>
               </tbody>
             </table>
           </div>
@@ -346,6 +346,32 @@ styleSheet.textContent = `
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
+  }
+  
+  /* Мобильная адаптация для детальной страницы */
+  @media (max-width: 768px) {
+    .knife-details-card {
+      grid-template-columns: 1fr !important;
+      padding: 1rem !important;
+    }
+    .knife-details-image {
+      max-height: 300px !important;
+    }
+    .knife-details-title {
+      text-align: center !important;
+    }
+    .knife-details-price {
+      text-align: center !important;
+    }
+    .knife-details-section {
+      text-align: center !important;
+    }
+    .knife-details-table {
+      font-size: 0.875rem;
+    }
+    .knife-details-container {
+      padding: 1rem !important;
+    }
   }
 `;
 if (!document.head.querySelector('#details-styles')) {

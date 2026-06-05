@@ -33,7 +33,7 @@ def get_knives(
     # Поиск по названию или описанию
     if search:
         query = query.filter(
-            Knife.name.contains(search) | Knife.description.contains(search)
+            Knife.name.ilike(f"%{search}%") | Knife.description.ilike(f"%{search}%")
         )
     
     # Фильтр по минимальной цене
